@@ -8,6 +8,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
+from .forms import PostForm
 from .models import Post
 
 
@@ -43,7 +44,8 @@ class PostDetailView(DetailView):
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ['title', 'content']
+    # fields = ['title', 'content']
+    form_class = PostForm
 
     def form_valid(self, form):
         form.instance.author = self.request.user
