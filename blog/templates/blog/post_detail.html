@@ -14,6 +14,13 @@
         {% endif %}
       </div>
       <h2 class="article-title">{{ object.title }}</h2>
+       <!-- 
+  
+              Here we have to added javasecript and code it wiout p element 
+              {{ post.content|truncatewords:30|linebreaks }}
+              becuse dajngo do p by iteself
+
+        -->
       <p class="article-content">{{ object.content }}</p>
     </div>
   </article>
