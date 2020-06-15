@@ -134,7 +134,7 @@ def post_share(request, slug):
             post.get_absolute_url())
             subject = f"{cd['name']} recommends you read "f"{post.title}"
             message = f"Read {post.title} at {post_url}\n\n"f"{cd['name']}\'s comments: {cd['comments']}"
-            send_mail(subject, message, 'admin@myblog.com',[cd['to']])
+            send_mail(subject, message, 'omradi136@gmail.com',[cd['to']])
             sent = True
     else:
         form = EmailPostForm()
