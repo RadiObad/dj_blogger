@@ -1,7 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.mail import send_mail
 from django.contrib.auth.models import User
+from .forms import EmailPostForm
 
 from django.views.generic import (
     ListView,
@@ -116,3 +118,26 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 def about(request):
     return render(request, 'blog/about.html', {'title': 'About'})
+
+
+def post_share(request, slug):
+    # Retrieve post by id
+    post = get_object_or_404(Post, slug=slug, status='published')
+    sent = False
+    if request.method == 'POST':
+        # Form was submitted
+        form = EmailPostForm(request.POST)
+        if form.is_valid():
+            # Form fields passed validation
+            cd = form.cleaned_data
+            post_url = request.build_absolute_uri(
+            post.get_absolute_url())
+            subject = f"{cd['name']} recommends you read "f"{post.title}"
+            message = f"Read {post.title} at {post_url}\n\n"f"{cd['name']}\'s comments: {cd['comments']}"
+            send_mail(subject, message, 'admin@myblog.com',[cd['to']])
+            sent = True
+    else:
+        form = EmailPostForm()
+    return render(request, 'blog/share.html', {'post': post, 'form': form, 'sent': sent})
+
+
