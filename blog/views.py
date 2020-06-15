@@ -1,9 +1,11 @@
+from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from .forms import EmailPostForm
+from taggit.models import Tag
 
 from django.views.generic import (
     ListView,
@@ -15,8 +17,14 @@ from django.views.generic import (
 from .models import Post
 
 
-def home(request):
+def home(request, tag_slug=None):
     object_list = Post.published.all()
+
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        object_list = object_list.filter(tags__in=[tag])
+    
     paginator = Paginator(object_list, 2) # 3 posts in each page
     page = request.GET.get('page')
     try:
@@ -30,7 +38,8 @@ def home(request):
    
     context = {
         'page_number': page,
-        'page_obj': posts
+        'page_obj': posts,
+        'tag': tag
     }
    
     return render(request, 'blog/home.html', context)

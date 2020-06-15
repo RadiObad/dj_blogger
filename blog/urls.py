@@ -14,6 +14,7 @@ from . import views
 
 urlpatterns = [
     path('', home, name='blog-home'),
+    path('tag/<slug:tag_slug>/', home, name='post_list_by_tag'),
     # path('', PostListView.as_view(), name='blog-home'),
     path('user/<str:username>', UserPostListView.as_view(), name='user-posts'),
     path('post/<int:year>/<int:month>/<int:day>/<slug:post>/', post_detail, name='post-detail'),
